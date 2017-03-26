@@ -9,18 +9,27 @@ var rhymingWord = 'Percocets'
 
 
 function printError(error) {
-	console.error(error.message);
-}
+	console.error(error.message)	}
 
 // "http://rhymebrain.com/talk?function=getRhymes&word=h" 
 function findRhyme(y) {
-request('http://rhymebrain.com/talk?function=getRhymes&word= + y', function (error, response, body) {
-  var results = JSON.parse(body)
-  console.log(results[0].word); // Print the HTML for the Google homepage.
+request('http://rhymebrain.com/talk?function=getRhymes&word=' + y, function (error, response, body) {
+  var results = JSON.parse(body);
+  // console.log(results[0].word + ' THE RHYMED WORD');
+  console.log(String(results[0].word))
+  return (8 * 8);
+  
+
 });
 }
 
-console.log('Hello there is everything ok')
+function square(x) {
+   return x * x;
+}
+
+console.log(square(3))
+
+console.log(findRhyme('hello'))
 
 
 // http://rhymebrain.com/talk?function=getRhymes&word=hello Use this JSON api to get
@@ -38,13 +47,19 @@ osmosis
 })
 
 function parseLyrics(x) {
-	var newText = x.split('\n')
-	console.log(newText[1] + ' ' + newText[2])
-	var splitted = newText[1].split(/\s+/)
-	splitted = splitted[splitted.length-1] 
-	console.log(splitted)
+	var newText = x.split('\n') // split into line
+	console.log(newText[1] + ' ' + newText[2]) // takes 2nd and 3rd lines
+	var firstLine = newText[1];
+	var splitted = newText[1].split(/\s+/) // first line into words 
+	splitted = splitted[splitted.length-1] // last word of line
+	console.log(splitted + ' LAST WORD OF THE LINE') 
+	var rhymedWord = findRhyme(splitted)
+	console.log(rhymedWord + ' THIS IS THE RHYMED WORD')
+	var swappedLine = firstLine.replace('beat', rhymedWord)
+	console.log(swappedLine + ' SWAPPED LINE ')
 	// returns undefined console.log(rhyme(splitted))
 }
+
 
 
 
