@@ -1,49 +1,35 @@
-
-
 var osmosis = require('osmosis')
 var request = require('request')
-var rhymingWord = 'Percocets'
+var word = 'hello'
 
+// function printError(error) {
+// 	console.error(error.message)	}
 
-
-
-
-function printError(error) {
-	console.error(error.message)	}
-
-// "http://rhymebrain.com/talk?function=getRhymes&word=h" 
 function findRhyme(y) {
-request('http://rhymebrain.com/talk?function=getRhymes&word=' + y, function (error, response, body) {
+var url = 'http://rhymebrain.com/talk?function=getRhymes&word=' + y;
+request(url, function (error,response, body) {
   var results = JSON.parse(body);
-  // console.log(results[0].word + ' THE RHYMED WORD');
-  console.log(String(results[0].word))
-  return (8 * 8);
-  
-
+  console.log(results[0].word + ' THE RHYMED WORD');
+  var answer = String(results[0].word)
 });
+
 }
 
-function square(x) {
-   return x * x;
-}
-
-console.log(square(3))
-
-console.log(findRhyme('hello'))
 
 
-// http://rhymebrain.com/talk?function=getRhymes&word=hello Use this JSON api to get
-// the actual rhymes. Much more accurate than rhyme dictionary. 
+
+// console.log(findRhyme('hello'))
+
 
 
 osmosis
 .get('https://genius.com/')
-.find('.home_charts_row:last')
+.find('.home_charts_row:first')
 .follow('@href')
-.find('.lyrics p')
+.find('.lyrics .referent')
 .set('results')
 .data(function(song){
-	parseLyrics(song.results);
+	parser(song.results);
 })
 
 function parseLyrics(x) {
@@ -61,6 +47,28 @@ function parseLyrics(x) {
 }
 
 
+function parser(z) {
+	var newText = z.split('\n') // split into line
+	console.log(newText[1] + ' ' + newText[2]) // takes 2nd and 3rd lines
+	var firstLine = newText[1];
+	var splitted = newText[1].split(/\s+/) // first line into words 
+	splitted = splitted[splitted.length-1] // last word of line
+	console.log(splitted)
+	var url = 'http://rhymebrain.com/talk?function=getRhymes&word=' + splitted
+	request(url, function (error,response, body) {
+	  var results = JSON.parse(body);
+	  console.log(results[0].word + ' THE RHYMED WORD');
+	  var answer = String(results[0].word)
+	  changed = newText[1].replace(splitted, answer)
+	  console.log(changed)
+
+	});
+
+
+}
+
+// The issue with the findRhyme function return undefined is 
+// that it is wrapped in another function and cannot pass the 
 
 
 // home_charts_row home_charts_row--big home_charts_row--big_border
