@@ -4,17 +4,22 @@ var cheerio = require('cheerio')
 var LyricUrls = []
 
 
-function grabLyricUrls(x) {  
-    request('https://www.genius.com', function(err, resp, html) {   
-        console.log('starting scrape')
-        if (!err){
-        const $ = cheerio.load(html);
-        $("a.chart_row").each(function (index){
-            x.push(($(this).attr('href')))   
-        })
-        }
+    request({
+        url: "https://www.genius.com",
+    }, function(error, response, body) {
+            cheerioParser(body)
     });
-}
 
+    function cheerioParser(x) {
+        const $ = cheerio.load(x)
+        $("a.chart_row").each(function (index){
+            var LyricUrls = []
+            LyricUrls.push(($(this).attr('href'))) 
+            readout(LyricUrls)  
+        })
+    }
 
-var hello = grabLyricUrls(LyricUrls)
+    function readout(x) {
+        console.log(x)
+    }
+console.log(LyricUrls)
