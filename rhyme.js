@@ -22,7 +22,7 @@ function cheerioParser(x) {
 
 // Grabbing the lyrics from the randomly selected page
 function scrapeLyrics(page) {
-    console.log(page)
+        console.log(page)
         request({
             url: page}, function(error, response, body) {
                 const $ = cheerio.load(body)
@@ -32,11 +32,46 @@ function scrapeLyrics(page) {
         )
 }
 
-// Finding two lines in the same song 
+// Finding two lines in the same song and removing spaces
 function parseLyrics(song) {
-    var lines = song.split('\n')
-    lines = lines.filter(function(n){ return n != undefined })
+    lines = song.split("\n");
+    // long way of remove all verse, chorus elements
+    lines.forEach(function(element) {
+        if (element.startsWith('[')) {
+            var index = lines.indexOf(element)
+            if (index > -1) {
+                lines.splice(index, 1);
+            }
+        }
+    })
+    // removing blank spaces
+    lines = lines.filter(function(n){ return n != '' }); 
+
+
+    // replacing brackets for adlibs
+    for (i = 0; i < lines.length; i++) {
+        lines[i] = lines[i].replace("(","")
+        lines[i] = lines[i].replace(")","")
+    }
+
+
     var randomNo = Math.floor(Math.random()*(lines.length - 1))
-    console.log(lines[randomNo])
-    console.log(lines[randomNo + 1])
+    var bars = [lines[randomNo], lines[randomNo + 1]]
+    console.log(bars)
+    constructRhyme(bars)
 }
+
+function constructRhyme(bars) {
+    console.log(bars)
+    var bar = bars[Math.floor(Math.random()*bars.length)];
+    var rhymingWord = ((bar.split(" ").splice(-1)))
+    request({ 
+        url: "https://api.datamuse.com/words?rel_rhy=" + rhymingWord,}, function(error, response, body) {
+            var parsedObject = JSON.parse(body)
+            console.log(parsedObject[1])
+    });
+}
+
+
+
+
