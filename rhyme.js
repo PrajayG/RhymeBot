@@ -61,16 +61,24 @@ function parseLyrics(song) {
     constructRhyme(bars)
 }
 
+// To do 
 function constructRhyme(bars) {
     console.log(bars)
     var bar = bars[Math.floor(Math.random()*bars.length)];
     var rhymingWord = ((bar.split(" ").splice(-1)))
+    console.log(rhymingWord)
     request({ 
-        url: "https://api.datamuse.com/words?rel_rhy=" + rhymingWord,}, function(error, response, body) {
-            var parsedObject = JSON.parse(body)
-            console.log(parsedObject[1])
+        url: "https://api.datamuse.com/words?rel_rhy=" + rhymingWord}, function(error, response, body) {
+            try {
+                console.log(bars.toString().replace(rhymingWord, parsedObject[0].word))
+            } catch (error) {
+                console.log('Something went wrong ' + error)
+            }
+
     });
 }
+
+
 
 
 
