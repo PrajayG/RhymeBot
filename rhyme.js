@@ -1,7 +1,7 @@
 var request = require('request')
 var cheerio = require('cheerio')
 
-
+var images = require("./image.js");
 
 // Initial Request to Genius for newest songs
 request({ 
@@ -70,8 +70,10 @@ function constructRhyme(bars) {
     request({ 
         url: "https://api.datamuse.com/words?rel_rhy=" + rhymingWord}, function(error, response, body) {
             try {
+                images.createImage(bars.toString().replace(rhymingWord, parsedObject[0].word))
                 console.log(bars.toString().replace(rhymingWord, parsedObject[0].word))
             } catch (error) {
+                images.createImage(bar)
                 console.log('Something went wrong ' + error)
             }
 
