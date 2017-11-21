@@ -2,7 +2,7 @@ var request = require('request')
 var cheerio = require('cheerio')
 
 var images = require("./image.js");
-
+var artistTitle = 
 // Initial Request to Genius for newest songs
 request({ 
     url: "https://www.genius.com",}, function(error, response, body) {
@@ -70,11 +70,11 @@ function constructRhyme(bars) {
     request({ 
         url: "https://api.datamuse.com/words?rel_rhy=" + rhymingWord}, function(error, response, body) {
             try {
+                var parsedObject = JSON.parse(body)
                 images.createImage(bars.toString().replace(rhymingWord, parsedObject[0].word))
                 console.log(bars.toString().replace(rhymingWord, parsedObject[0].word))
             } catch (error) {
-                images.createImage(bar)
-                console.log('Something went wrong ' + error)
+                console.log('Couldn\'t find a rhyming word to match'  + error)
             }
 
     });

@@ -8,10 +8,10 @@ var Jimp = require("jimp");
 var exports = module.exports = {}
 
 exports.createImage = function(text) {
-    var image = new Jimp(600, 400, 0x000000FF, function (err, image) {
+    var image = new Jimp(350, 200, 0x000000FF, function (err, image) {
         // Loading the font 
         Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(function (font) {
-            image.print(font, 50, 50, text);
+            image.print(font, 50, 20, text, 300);
             image.write(__dirname, function() {
                 var file = "test." + image.getExtension();
                 image.write(file)
