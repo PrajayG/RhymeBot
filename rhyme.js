@@ -6,8 +6,9 @@ var artistTitle = "";
 
 // To Do
 // Put a space in between the two lines when printing - DONE
+// Find a way to choose the rhyming word with more than 
+// two syllables - To do
 // 
-//
 
 // Initial Request to Genius for newest songs
 request(
@@ -88,10 +89,19 @@ function constructRhyme(bars) {
     function(error, response, body) {
       try {
         var parsedObject = JSON.parse(body);
-        images.createImage(
+        for (var i = 1; i <= 30; i++) {
+            if (parsedObject[i].numSyllables > 1) {
+                images.createImage(
+                    bars.join(', ').replace(rhymingWord, parsedObject[0].word)
+                );
+                break
+            }
+            else {
+                console.log('Number of syllables too low')
+            }
+                          
+        }
 
-          bars.join(', ').replace(rhymingWord, parsedObject[0].word)
-        );
         console.log(bars.toString().replace(rhymingWord, parsedObject[0].word));
       } catch (error) {
         console.log("Couldn't find a rhyming word to match" + error);
