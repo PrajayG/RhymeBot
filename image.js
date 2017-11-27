@@ -11,7 +11,7 @@ var exports = module.exports = {}
 
 
 
-exports.createImage = function(text) {
+exports.createImage = function(text, tweet) {
     var image = new Jimp(350, 100, 0x000000FF, function (err, image) {
         // Loading the font 
         Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(function (font) {
@@ -22,10 +22,12 @@ exports.createImage = function(text) {
             }); 
         });
     });
+    setTimeout(sendTweet(tweet), 4000)
+
 }
 
-exports.sendTweet = function(name, image) { 
-
+sendTweet = function(x) {
+    tweetImage(x)
 }
 
 var client = new Twitter({
@@ -35,12 +37,29 @@ var client = new Twitter({
     access_token_secret: keys.ACCESS_TOKEN_SECRET
 });
 
-function tweetThis(x) {
-    client.post('statuses/update', {status: x}, function(error, tweet, response) {
-        if (!error) {
-          console.log(tweet.text);
-        }
-      });
-}
+tweetImage = function(x) {
+    var data = require('fs').readFileSync('test.png');
 
-tweetThis('Whatever will we do next')
+    // Make post request on media endpoint. Pass file data as media parameter
+    client.post('media/upload', {media: data}, function(error, media, response) {
+    
+      if (!error) {
+    
+        // If successful, a media object will be returned.
+        console.log(media);
+    
+        // Lets tweet it
+        var status = {
+          status: x,
+          media_ids: media.media_id_string // Pass the media id string
+        }
+    
+        client.post('statuses/update', status, function(error, tweet, response) {
+          if (!error) {
+            console.log(tweet);
+          }
+        });
+    
+      }
+    });
+}

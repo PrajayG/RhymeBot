@@ -2,13 +2,11 @@ var request = require("request");
 var cheerio = require("cheerio");
 
 var images = require("./image.js");
-var artistTitle = "";
+var artistTitle = ''
 
 // To Do
 // Put a space in between the two lines when printing - DONE
-// Find a way to choose the rhyming word with more than 
-// two syllables - To do
-// 
+
 
 // Initial Request to Genius for newest songs
 request({
@@ -39,6 +37,9 @@ function scrapeLyrics(page) {
         function (error, response, body) {
             const $ = cheerio.load(body);
             var songLyrics = $(".lyrics p").text();
+            var title = $(".header_with_cover_art-primary_info-title").text()
+            var artist = $(".header_with_cover_art-primary_info-primary_artist").text()
+            artistTitle = artist + ' - ' + title;
             parseLyrics(songLyrics);
         }
     );
@@ -80,7 +81,6 @@ function constructRhyme(bars) {
 
     var rhymingWord = bar.split(" ").splice(-1);
     console.log(rhymingWord);
-
     request({
             url: "https://api.datamuse.com/words?rel_rhy=" + rhymingWord
         },
@@ -90,8 +90,9 @@ function constructRhyme(bars) {
                 for (var i = 1; i <= 30; i++) {
                     if (parsedObject[i].numSyllables > 1) {
                         images.createImage(
-                            bars.join(', ').replace(rhymingWord, parsedObject[0].word)
+                            bars.join(', ').replace(rhymingWord, parsedObject[0].word), artistTitle                       
                         );
+                        
                         break
                     } else {
                         console.log('Number of syllables too low')
