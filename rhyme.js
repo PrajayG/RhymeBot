@@ -4,9 +4,14 @@ var cheerio = require("cheerio");
 var images = require("./image.js");
 var artistTitle = ''
 
+var Twitter = require("twitter")
+var keys = require("./keys.js")
+var Jimp = require("jimp")
+
 // To Do
 // Put a space in between the two lines when printing - DONE
-
+// Restructure to have all code in this .js have create image function 
+// located in here 
 
 // Initial Request to Genius for newest songs
 request({
@@ -89,20 +94,69 @@ function constructRhyme(bars) {
                 var parsedObject = JSON.parse(body);
                 for (var i = 1; i <= 30; i++) {
                     if (parsedObject[i].numSyllables > 1) {
-                        images.createImage(
-                            bars.join(', ').replace(rhymingWord, parsedObject[0].word), artistTitle                       
+                        createImage(
+                            bars.join(', ').replace(rhymingWord, parsedObject[0].word)                   
                         );
-                        
+                        console.log(artistTitle)
                         break
                     } else {
                         console.log('Number of syllables too low')
                     }
-
                 }
                 console.log(bars.join(', ').replace(rhymingWord, parsedObject[0].word));
             } catch (error) {
                 console.log("Couldn't find a rhyming word to match" + error);
             }
+        })
+   
+    
+}
+
+function createImage (text) {
+    console.log('Attempting to create image..')
+    var image = new Jimp(350, 100, 0x000000FF, function (err, image) {
+        // Loading the font 
+        Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(function (font) {
+            image.print(font, 50, 20, text, 300);
+            console.log('image made')
+            var file = "test." + image.getExtension();
+            image.write(file, tweetImage)
+            console.log('Image write successful')
+        });
+    })
+}
+
+
+var client = new Twitter({
+    consumer_key: keys.CONSUMER_KEY,
+    consumer_secret: keys.CONSUMER_SECRET,
+    access_token_key: keys.ACCESS_TOKEN,
+    access_token_secret: keys.ACCESS_TOKEN_SECRET
+});
+
+tweetImage = function() {
+    var data = require('fs').readFileSync('test.png');
+
+    // Make post request on media endpoint. Pass file data as media parameter
+    client.post('media/upload', {media: data}, function(error, media, response) {
+    
+      if (!error) {
+    
+        // If successful, a media object will be returned.
+        console.log('Inital request made');
+    
+        // Lets tweet it
+        var status = {
+          status: artistTitle,
+          media_ids: media.media_id_string // Pass the media id string
         }
-    );
+    
+        client.post('statuses/update', status, function(error, tweet, response) {
+          if (!error) {
+            console.log('Tweet posted');
+          }
+        });
+    
+      }
+    });
 }

@@ -11,7 +11,7 @@ var exports = module.exports = {}
 
 
 
-exports.createImage = function(text, tweet) {
+exports.createImage = function(text) {
     var image = new Jimp(350, 100, 0x000000FF, function (err, image) {
         // Loading the font 
         Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(function (font) {
@@ -22,8 +22,6 @@ exports.createImage = function(text, tweet) {
             }); 
         });
     });
-    setTimeout(sendTweet(tweet), 4000)
-
 }
 
 sendTweet = function(x) {
