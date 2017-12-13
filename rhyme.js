@@ -8,12 +8,7 @@ var Twitter = require("twitter")
 var keys = require("./keys.js")
 var Jimp = require("jimp")
 
-// To Do
-// Put a space in between the two lines when printing - DONE
-// Restructure to have all code in this .js have create image function 
-// located in here 
 
-// Initial Request to Genius for newest songs
 request({
         url: "https://www.genius.com"
     },
@@ -95,7 +90,7 @@ function constructRhyme(bars) {
                 for (var i = 1; i <= 30; i++) {
                     if (parsedObject[i].numSyllables > 1) {
                         createImage(
-                            bars.join(', ').replace(rhymingWord, parsedObject[0].word)                   
+                            bars.join(', ').replace(rhymingWord, parsedObject[0].word)
                         );
                         console.log(artistTitle)
                         break
@@ -104,15 +99,16 @@ function constructRhyme(bars) {
                     }
                 }
                 console.log(bars.join(', ').replace(rhymingWord, parsedObject[0].word));
+                console.log(rhymingWord)
             } catch (error) {
                 console.log("Couldn't find a rhyming word to match" + error);
             }
         })
-   
-    
+
+
 }
 
-function createImage (text) {
+function createImage(text) {
     console.log('Attempting to create image..')
     var image = new Jimp(350, 100, 0x000000FF, function (err, image) {
         // Loading the font 
@@ -134,29 +130,31 @@ var client = new Twitter({
     access_token_secret: keys.ACCESS_TOKEN_SECRET
 });
 
-tweetImage = function() {
+tweetImage = function () {
     var data = require('fs').readFileSync('test.png');
 
     // Make post request on media endpoint. Pass file data as media parameter
-    client.post('media/upload', {media: data}, function(error, media, response) {
-    
-      if (!error) {
-    
-        // If successful, a media object will be returned.
-        console.log('Inital request made');
-    
-        // Lets tweet it
-        var status = {
-          status: artistTitle,
-          media_ids: media.media_id_string // Pass the media id string
+    client.post('media/upload', {
+        media: data
+    }, function (error, media, response) {
+
+        if (!error) {
+
+            // If successful, a media object will be returned.
+            console.log('Inital request made');
+
+            // Lets tweet it
+            var status = {
+                status: artistTitle,
+                media_ids: media.media_id_string // Pass the media id string
+            }
+
+            client.post('statuses/update', status, function (error, tweet, response) {
+                if (!error) {
+                    console.log('Tweet posted');
+                }
+            });
+
         }
-    
-        client.post('statuses/update', status, function(error, tweet, response) {
-          if (!error) {
-            console.log('Tweet posted');
-          }
-        });
-    
-      }
     });
 }
